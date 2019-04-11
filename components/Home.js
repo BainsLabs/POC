@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { Button, View, TextInput } from 'react-native'
 import { Icon } from 'react-native-elements'
-import _ from 'lodash'
+import { connect } from 'react-redux'
+import { setEmail } from '../redux/actions/faceRecognition'
 
-export default class HomeScreen extends Component {
+class HomeScreen extends Component {
 
   static navigationOptions = {
     title: 'BainsLabs',
@@ -12,17 +13,21 @@ export default class HomeScreen extends Component {
     text: ""
   }
 
-  setEmail = value => {
+  onChange = value => {
     this.setState({ text: value })
   }
 
+  onSubmit = async (navigate) => {
+    await setEmail(this.state.text)
+    navigate("Profile")
+  }
 
   render() {
     const { navigate } = this.props.navigation;
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <TextInput style={{ marginBottom: 10 }}
-          onChangeText={text => this.setEmail(text)}
+          onChangeText={text => this.onChange(text)}
           value={this.state.text}
           placeholder="Email@bainslabs.com" />
         <Icon
@@ -30,7 +35,7 @@ export default class HomeScreen extends Component {
           reverse
           raised
           name='log-in'
-          onPress={() => navigate('Profile')}
+          onPress={() => this.onSubmit(navigate)}
           type='feather'
           color='#000'
         />
@@ -38,3 +43,5 @@ export default class HomeScreen extends Component {
     );
   }
 }
+
+export default connect(null, { setEmail })(HomeScreen)

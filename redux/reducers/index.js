@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
-
+import employee from './employee'
 
 export default combineReducers({
-  hello: { "test": "test" }
+  employee
 });

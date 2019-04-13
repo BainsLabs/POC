@@ -2,6 +2,8 @@
 # Edit at https://www.gitignore.io/?templates=reactnative
 
 ### ReactNative ###
+.lock
+package-lock.json
 # React Native Stack Base
 
 .expo

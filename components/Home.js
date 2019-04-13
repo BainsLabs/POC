@@ -22,8 +22,7 @@ class HomeScreen extends Component {
     const validEmail = validateEmail(email);
     if (validEmail) {
       await setEmail(email);
-      navigate("Profile");
-      console.log("coming inside");
+      navigate("Camera");
       return;
     }
     this.setState({

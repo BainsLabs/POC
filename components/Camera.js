@@ -19,25 +19,31 @@ class CameraComponent extends Component {
     this.setState({ hasCameraPermission: status === "granted" });
   }
 
+  shouldComponentUpdate() {
+    return this.props.navigation.state.routeName === "Camera";
+  }
+
   onFacesDetected = async () => {
     if (this.camera) {
+      const { navigate } = this.props.navigation;
       let photo = await this.camera.takePictureAsync({
         base64: true,
         skipProcessing: true
       });
-      if (!this.state.faceDetected) {
-        return;
-      }
-      const { base64 } = photo;
-      console.log(base64, "base");
-      const { email, faceMatch } = this.props;
-      const params = {
-        image_base: base64,
-        ...email
-      };
-      await faceMatch(params);
+      navigate("Profile");
+
+      // if (!this.state.faceDetected) {
+      //   return;
+      // }
+      // const { base64 } = photo;
+      // const { email, faceMatch } = this.props;
+      // const params = {
+      //   image_base: base64,
+      //   ...email
+      // };
+      // await faceMatch(params);
     }
-    console.log("error on snap: ", e);
+    console.log("error on snap: ");
   };
 
   handleFacesDetected = ({ faces }) => {
@@ -46,7 +52,6 @@ class CameraComponent extends Component {
     }
   };
   render() {
-    console.log(this.state.base64);
     const { hasCameraPermission } = this.state;
     if (hasCameraPermission === null) {
       return <View />;
@@ -58,7 +63,11 @@ class CameraComponent extends Component {
           <Camera
             style={{ flex: 1 }}
             type={"front"}
-            onFacesDetected={this.handleFacesDetected}
+            onFacesDetected={
+              this.props.navigation.state.routeName === "Camera"
+                ? this.handleFacesDetected
+                : null
+            }
             ref={ref => {
               this.camera = ref;
             }}

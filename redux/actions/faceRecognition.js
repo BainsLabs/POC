@@ -2,7 +2,6 @@ import * as faceRecog from "../actiontypes/faceRecognition";
 import { faceMatchApi } from "../../services";
 
 export const faceMatch = params => async dispatch => {
-  console.log(params, "testing");
   const response = await faceMatchApi(params);
   dispatch({
     type: faceRecog.FACE_MATCH,
@@ -11,6 +10,7 @@ export const faceMatch = params => async dispatch => {
 };
 
 export const setEmail = email => async dispatch => {
+  console.log(email, "email");
   dispatch({
     type: faceRecog.SET_EMAIL,
     payload: email

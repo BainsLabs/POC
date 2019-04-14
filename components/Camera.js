@@ -26,21 +26,19 @@ class CameraComponent extends Component {
   onFacesDetected = async () => {
     if (this.camera) {
       const { navigate } = this.props.navigation;
-      const { faceDetected } = this.state;
       const { setBase64 } = this.props;
-      if (!faceDetected) {
+      if (!this.state.faceDetected) {
         return;
       }
       let photo = await this.camera.takePictureAsync({
         base64: true,
         skipProcessing: true
       });
-
+      setBase64(photo.base64);
+      navigate("Profile");
       this.setState({
         faceDetected: false
       });
-      await setBase64(photo.base64);
-      navigate("Profile");
       return;
     }
     console.log("error on snap");
@@ -48,8 +46,7 @@ class CameraComponent extends Component {
 
   handleFacesDetected = ({ faces }) => {
     if (faces.length > 0) {
-      this.setState({ faceDetected: true });
-      this.onFacesDetected();
+      this.setState({ faceDetected: true }, () => this.onFacesDetected());
     }
   };
   render() {
@@ -84,11 +81,7 @@ class CameraComponent extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return { email: _.get(state, "email") || {} };
-};
-
 export default connect(
-  mapStateToProps,
+  null,
   { setBase64 }
 )(CameraComponent);

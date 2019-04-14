@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Text, View } from "react-native";
 import { Camera, Permissions, FaceDetector } from "expo";
-import { faceMatch } from "../redux/actions/faceRecognition";
+import { setBase64 } from "../redux/actions/faceRecognition";
 import { connect } from "react-redux";
 import _ from "lodash";
 
@@ -19,36 +19,37 @@ class CameraComponent extends Component {
     this.setState({ hasCameraPermission: status === "granted" });
   }
 
-  shouldComponentUpdate() {
-    return this.props.navigation.state.routeName === "Camera";
+  componentWillUnmount() {
+    this.camera.remove();
   }
 
   onFacesDetected = async () => {
     if (this.camera) {
       const { navigate } = this.props.navigation;
+      const { faceDetected } = this.state;
+      const { setBase64 } = this.props;
+      if (!faceDetected) {
+        return;
+      }
       let photo = await this.camera.takePictureAsync({
         base64: true,
         skipProcessing: true
       });
-      navigate("Profile");
 
-      // if (!this.state.faceDetected) {
-      //   return;
-      // }
-      // const { base64 } = photo;
-      // const { email, faceMatch } = this.props;
-      // const params = {
-      //   image_base: base64,
-      //   ...email
-      // };
-      // await faceMatch(params);
+      this.setState({
+        faceDetected: false
+      });
+      await setBase64(photo.base64);
+      navigate("Profile");
+      return;
     }
-    console.log("error on snap: ");
+    console.log("error on snap");
   };
 
   handleFacesDetected = ({ faces }) => {
     if (faces.length > 0) {
-      this.setState({ faceDetected: true }, () => this.onFacesDetected());
+      this.setState({ faceDetected: true });
+      this.onFacesDetected();
     }
   };
   render() {
@@ -73,37 +74,10 @@ class CameraComponent extends Component {
             }}
             faceDetectorSettings={{
               mode: FaceDetector.Constants.Mode.fast,
-              detectLandmarks: FaceDetector.Constants.Mode.all,
+              detectLandmarks: FaceDetector.Constants.Mode.none,
               runClassifications: FaceDetector.Constants.Mode.none
             }}
-          >
-            {/* <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: 'row',
-                alignSelf: 'flex-end',
-                alignItems: 'flex-end',
-              }}
-              onPress={() => this.snap(false)}>
-              <Text
-                style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>
-                {' '}Enroll{' '}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: 'row',
-                alignSelf: 'flex-end',
-                alignItems: 'flex-end',
-              }}
-              onPress={() => this.snap(true)}>
-              <Text
-                style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>
-                {' '}Recognize{' '}
-              </Text>
-            </TouchableOpacity> */}
-          </Camera>
+          />
         </View>
       );
     }
@@ -116,5 +90,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { faceMatch }
+  { setBase64 }
 )(CameraComponent);

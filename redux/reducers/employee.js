@@ -10,8 +10,11 @@ export default (state = intialState, action) => {
       };
     case facceRecog.SET_EMAIL:
       return {
-        ...state,
-        ...action.payload
+        email: { state, ...action.payload }
+      };
+    case facceRecog.SET_BASE64:
+      return {
+        base64: { state, ...action.payload }
       };
     default:
       return state;

@@ -1,17 +1,17 @@
 import React, { Component } from "react";
 import { Text, View } from "react-native";
 import { Camera, Permissions, FaceDetector } from "expo";
-import { setBase64 } from "../redux/actions/faceRecognition";
+import { faceMatch } from "../redux/actions/faceRecognition";
 import { connect } from "react-redux";
 import _ from "lodash";
-
 class CameraComponent extends Component {
   static navigationOptions = {
     title: "Face Detection"
   };
   state = {
     hasCameraPermission: null,
-    faceDetected: false
+    faceDetected: false,
+    loader: false
   };
 
   async componentDidMount() {
@@ -19,26 +19,32 @@ class CameraComponent extends Component {
     this.setState({ hasCameraPermission: status === "granted" });
   }
 
-  componentWillUnmount() {
-    this.camera.remove();
-  }
-
   onFacesDetected = async () => {
     if (this.camera) {
-      const { navigate } = this.props.navigation;
-      const { setBase64 } = this.props;
+      const {
+        faceMatch,
+        navigation: { navigate },
+        email
+      } = this.props;
       if (!this.state.faceDetected) {
         return;
       }
       let photo = await this.camera.takePictureAsync({
         base64: true,
-        skipProcessing: true
+        skipProcessing: false
       });
-      setBase64(photo.base64);
-      navigate("Profile");
       this.setState({
-        faceDetected: false
+        faceDetected: false,
+        loader: true
       });
+      const params = {
+        img_base: photo.base64,
+        email
+      };
+
+      const response = await faceMatch(params);
+      console.log(response, "response");
+      navigate("Profile");
       return;
     }
     console.log("error on snap");
@@ -50,7 +56,7 @@ class CameraComponent extends Component {
     }
   };
   render() {
-    const { hasCameraPermission } = this.state;
+    const { hasCameraPermission, loader } = this.state;
     if (hasCameraPermission === null) {
       return <View />;
     } else if (hasCameraPermission === false) {
@@ -74,14 +80,18 @@ class CameraComponent extends Component {
               detectLandmarks: FaceDetector.Constants.Mode.none,
               runClassifications: FaceDetector.Constants.Mode.none
             }}
-          />
+          >
+            {loader ? <Text style={{ color: "white" }}>Loading</Text> : null}
+          </Camera>
         </View>
       );
     }
   }
 }
-
+const mapStateToProps = state => ({
+  email: _.get(state, "employee.email") || {}
+});
 export default connect(
-  null,
-  { setBase64 }
+  mapStateToProps,
+  { faceMatch }
 )(CameraComponent);

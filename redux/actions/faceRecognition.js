@@ -5,8 +5,9 @@ export const faceMatch = params => async dispatch => {
   const response = await faceMatchApi(params);
   dispatch({
     type: faceRecog.FACE_MATCH,
-    payload: response.data
+    payload: response
   });
+  return response;
 };
 
 export const setEmail = email => async dispatch => {

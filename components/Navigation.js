@@ -1,11 +1,11 @@
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import Camera from "./Camera";
-import Home from "./Home";
+import Login from "./Login";
 import Profile from "./Profile";
 
 const MainNavigator = createStackNavigator(
   {
-    Home: { screen: Profile },
+    Home: { screen: Login },
     Camera: { screen: Camera },
     Profile: { screen: Profile }
   },

@@ -7,35 +7,6 @@ import { validateEmail } from "../utils/index";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 class HomeScreen extends Component {
-  static navigationOptions = {
-    title: "BainsLabs"
-  };
-  state = {
-    email: "",
-    error: false
-  };
-
-  onChange = value => {
-    this.setState({ email: value });
-  };
-
-  onSubmit = async () => {
-    const {
-      navigation: { navigate },
-      setEmail
-    } = this.props;
-    const { email } = this.state;
-    const validEmail = validateEmail(email);
-    if (validEmail) {
-      await setEmail(email);
-      navigate("Camera");
-      return;
-    }
-    this.setState({
-      error: true
-    });
-  };
-
   render() {
     const { error, email } = this.state;
     const { imageStyle, textStyle } = styles;

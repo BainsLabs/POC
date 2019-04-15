@@ -5,7 +5,7 @@ import Profile from "./Profile";
 
 const MainNavigator = createStackNavigator(
   {
-    Home: { screen: Home },
+    Home: { screen: Profile },
     Camera: { screen: Camera },
     Profile: { screen: Profile }
   },

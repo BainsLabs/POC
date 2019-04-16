@@ -24,14 +24,16 @@ class LoginForm extends Component {
     this.setState({
       error: false
     });
-    const { navigate, setEmail, snackbarCallback } = this.props;
+    const { navigate, setEmail, snackbarCallback, setLoader } = this.props;
     const { email } = this.state;
     const validEmail = validateEmail(email);
     if (validEmail) {
       const params = {
         email
       };
+      setLoader();
       const res = await emailCheck(params);
+      setLoader();
       if (res.status === 200) {
         await setEmail(email);
         navigate("Camera");

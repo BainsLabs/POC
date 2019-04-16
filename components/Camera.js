@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import {
   Text,
   View,
-  Image,
   Dimensions,
   Platform,
   TouchableOpacity
@@ -12,6 +11,8 @@ import { faceMatch } from "../redux/actions/faceRecognition";
 import { connect } from "react-redux";
 import { ScreenOrientation } from "expo";
 import _ from "lodash";
+import { Icon } from "react-native-elements";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -112,13 +113,11 @@ class CameraComponent extends Component {
                 runClassifications: FaceDetector.Constants.Mode.none
               }}
             >
-              {loader ? (
-                <Image
-                  // resizeMode="contain"
-                  style={{ width: SCREEN_WIDTH }}
-                  source={require("../assets/loader.gif")}
-                />
-              ) : null}
+              <Spinner
+                visible={this.state.loader}
+                textContent={"Loading..."}
+                textStyle={styles.spinnerTextStyle}
+              />
             </Camera>
           ) : (
             <Camera
@@ -132,27 +131,20 @@ class CameraComponent extends Component {
                 style={{
                   flex: 1,
                   backgroundColor: "transparent",
-                  flexDirection: "row"
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "flex-start"
                 }}
               >
-                <TouchableOpacity
-                  onPress={() => this.setFace()}
-                  style={{
-                    flex: 0.1,
-                    alignSelf: "flex-end",
-                    alignItems: "center"
-                  }}
-                >
-                  <Text>Click</Text>
+                <TouchableOpacity onPress={() => this.setFace()}>
+                  <Icon raised name="camera" type="font-awesome" color="#000" />
                 </TouchableOpacity>
               </View>
-              {loader ? (
-                <Image
-                  // resizeMode="contain"
-                  style={{ width: SCREEN_WIDTH }}
-                  source={require("../assets/loader.gif")}
-                />
-              ) : null}
+              <Spinner
+                visible={this.state.loader}
+                textContent={"Loading..."}
+                textStyle={styles.spinnerTextStyle}
+              />
             </Camera>
           )}
         </View>
@@ -163,6 +155,12 @@ class CameraComponent extends Component {
 const mapStateToProps = state => ({
   email: _.get(state, "employee.email") || {}
 });
+
+const styles = {
+  spinnerTextStyle: {
+    color: "#FFF"
+  }
+};
 export default connect(
   mapStateToProps,
   { faceMatch }

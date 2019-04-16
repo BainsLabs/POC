@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
+import { Text, View, Image } from "react-native";
+import { connect } from "react-redux";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -11,21 +12,31 @@ import {
   ResponsiveStyleSheet
 } from "react-native-responsive-ui";
 import { ScreenOrientation } from "expo";
-export default class ProfileView extends ResponsiveComponent {
+import _ from "lodash";
+class ProfileView extends ResponsiveComponent {
   static navigationOptions = {
     title: "Profile"
   };
-  componentWillMount() {
+  async componentDidMount() {
     ScreenOrientation.allowAsync(
       ScreenOrientation.Orientation.ALL_BUT_UPSIDE_DOWN
     );
     loc(this);
+    const { navigation } = this.props;
+    const params = {
+      email: navigation.getParam("email") || "akshay1@gmail.com"
+    };
   }
   componentWillUnmount() {
     rol();
   }
   render() {
     const { styles } = this;
+    const { profile, profile_user } = this.props;
+    console.log(profile, "profile");
+    const image_url =
+      profile_user.image_url ||
+      "https://bootdey.com/img/Content/avatar/avatar1.png";
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -33,21 +44,22 @@ export default class ProfileView extends ResponsiveComponent {
             <Image
               style={styles.avatar}
               source={{
-                uri: "https://bootdey.com/img/Content/avatar/avatar1.png"
+                uri: image_url
               }}
             />
 
-            <Text style={styles.name}>John Doe</Text>
+            <Text style={styles.name}>{profile_user.name}</Text>
           </View>
         </View>
 
         <View style={styles.body}>
           <View style={styles.bodyContent}>
-            <Text style={styles.textInfo}>johndoe@gmail.com</Text>
-
-            <Text style={styles.textInfo}>Following: 244</Text>
-
-            <Text style={styles.textInfo}>Followers: 1.250</Text>
+            <Text style={styles.textInfo}>
+              Email:&nbsp;{profile.official_email || ""}
+            </Text>
+            <Text style={styles.textInfo}>
+              Employee-ID:&nbsp;{profile.employee_id || ""}
+            </Text>
           </View>
         </View>
       </View>
@@ -70,6 +82,9 @@ export default class ProfileView extends ResponsiveComponent {
             padding: 30,
             alignItems: "center"
           },
+          heading: {
+            color: "#000"
+          },
           avatar: {
             width: wp(20),
             height: hp(50),
@@ -90,9 +105,6 @@ export default class ProfileView extends ResponsiveComponent {
             flex: 1,
             width: wp(50)
           },
-          // body: {
-          //   flexDirection: "row"
-          // },
           textInfo: {
             fontSize: hp(5),
             marginTop: 20,
@@ -143,3 +155,9 @@ export default class ProfileView extends ResponsiveComponent {
     ]);
   }
 }
+const mapStateToProps = state => ({
+  profile: _.get(state, "employee.employee.employee_profile") || {},
+  profile_user: _.get(state, "employee.employee.user") || {},
+  state
+});
+export default connect(mapStateToProps)(ProfileView);

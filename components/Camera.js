@@ -1,9 +1,20 @@
 import React, { Component } from "react";
-import { Text, View } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  Dimensions,
+  Platform,
+  TouchableOpacity
+} from "react-native";
 import { Camera, Permissions, FaceDetector } from "expo";
 import { faceMatch } from "../redux/actions/faceRecognition";
 import { connect } from "react-redux";
+import { ScreenOrientation } from "expo";
 import _ from "lodash";
+
+const SCREEN_WIDTH = Dimensions.get("window").width;
+
 class CameraComponent extends Component {
   static navigationOptions = {
     title: "Face Detection"
@@ -14,18 +25,30 @@ class CameraComponent extends Component {
     loader: false
   };
 
+  async componentWillMount() {
+    ScreenOrientation.allowAsync(
+      ScreenOrientation.Orientation.ALL_BUT_UPSIDE_DOWN
+    );
+  }
   async componentDidMount() {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({ hasCameraPermission: status === "granted" });
   }
-
+  setFace = () => {
+    this.setState(
+      {
+        faceDetected: true
+      },
+      () => this.onFacesDetected()
+    );
+  };
   onFacesDetected = async () => {
+    const {
+      faceMatch,
+      navigation: { navigate },
+      email
+    } = this.props;
     if (this.camera) {
-      const {
-        faceMatch,
-        navigation: { navigate },
-        email
-      } = this.props;
       if (!this.state.faceDetected) {
         return;
       }
@@ -43,11 +66,17 @@ class CameraComponent extends Component {
       };
 
       const response = await faceMatch(params);
-      console.log(response, "response");
-      navigate("Profile");
-      return;
+      if (response.status === 200) {
+        navigate("Profile", {
+          email
+        });
+        return;
+      }
     }
-    console.log("error on snap");
+    navigate("Home", {
+      showSnackbar: true,
+      message: "Face didnt Match"
+    });
   };
 
   handleFacesDetected = ({ faces }) => {
@@ -56,6 +85,7 @@ class CameraComponent extends Component {
     }
   };
   render() {
+    console.log(Platform.Version, "Version-check");
     const { hasCameraPermission, loader } = this.state;
     if (hasCameraPermission === null) {
       return <View />;
@@ -64,25 +94,67 @@ class CameraComponent extends Component {
     } else {
       return (
         <View style={{ flex: 1 }}>
-          <Camera
-            style={{ flex: 1 }}
-            type={"front"}
-            onFacesDetected={
-              this.props.navigation.state.routeName === "Camera"
-                ? this.handleFacesDetected
-                : null
-            }
-            ref={ref => {
-              this.camera = ref;
-            }}
-            faceDetectorSettings={{
-              mode: FaceDetector.Constants.Mode.fast,
-              detectLandmarks: FaceDetector.Constants.Mode.none,
-              runClassifications: FaceDetector.Constants.Mode.none
-            }}
-          >
-            {loader ? <Text style={{ color: "white" }}>Loading</Text> : null}
-          </Camera>
+          {Platform.Version > 26 ? (
+            <Camera
+              style={{ flex: 1 }}
+              type={"front"}
+              ref={ref => {
+                this.camera = ref;
+              }}
+              onFacesDetected={
+                this.props.navigation.state.routeName === "Camera"
+                  ? this.handleFacesDetected
+                  : null
+              }
+              faceDetectorSettings={{
+                mode: FaceDetector.Constants.Mode.fast,
+                detectLandmarks: FaceDetector.Constants.Mode.none,
+                runClassifications: FaceDetector.Constants.Mode.none
+              }}
+            >
+              {loader ? (
+                <Image
+                  // resizeMode="contain"
+                  style={{ width: SCREEN_WIDTH }}
+                  source={require("../assets/loader.gif")}
+                />
+              ) : null}
+            </Camera>
+          ) : (
+            <Camera
+              style={{ flex: 1 }}
+              type={"front"}
+              ref={ref => {
+                this.camera = ref;
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: "transparent",
+                  flexDirection: "row"
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => this.setFace()}
+                  style={{
+                    flex: 0.1,
+                    alignSelf: "flex-end",
+                    alignItems: "center"
+                  }}
+                >
+                  <Text>Click</Text>
+                </TouchableOpacity>
+              </View>
+              {loader ? (
+                <Image
+                  // resizeMode="contain"
+                  style={{ width: SCREEN_WIDTH }}
+                  source={require("../assets/loader.gif")}
+                />
+              ) : null}
+            </Camera>
+          )}
         </View>
       );
     }

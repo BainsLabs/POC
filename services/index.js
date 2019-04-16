@@ -1,7 +1,5 @@
-import axios from "axios";
-
 const api = async (url, params, method = "GET") => {
-  const api = await fetch(`http://742fbc1a.ngrok.io${url}`, {
+  const api = await fetch(`http://67ff58f0.ngrok.io${url}`, {
     method,
     body: JSON.stringify(params),
     headers: {
@@ -13,3 +11,8 @@ const api = async (url, params, method = "GET") => {
 };
 
 export const faceMatchApi = params => api("/", params, "POST");
+
+export const emailCheckApi = params => api("/usercheck", params, "POST");
+
+export const employeeProfileApi = params =>
+  api("/employeedetail", params, "POST");

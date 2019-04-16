@@ -6,25 +6,38 @@ import {
   Text,
   TouchableOpacity
 } from "react-native";
-
+import { emailCheck } from "../../redux/actions/faceRecognition";
 import { connect } from "react-redux";
 import { setEmail } from "../../redux/actions/faceRecognition";
 import { validateEmail } from "../../utils";
+
 class LoginForm extends Component {
   state = {
     email: "",
-    error: false
+    error: false,
+    snackbar: false
   };
   onChange = value => {
     this.setState({ email: value });
   };
   onSubmit = async () => {
-    const { navigate, setEmail } = this.props;
+    this.setState({
+      error: false
+    });
+    const { navigate, setEmail, snackbarCallback } = this.props;
     const { email } = this.state;
     const validEmail = validateEmail(email);
     if (validEmail) {
-      await setEmail(email);
-      navigate("Camera");
+      const params = {
+        email
+      };
+      const res = await emailCheck(params);
+      if (res.status === 200) {
+        await setEmail(email);
+        navigate("Camera");
+        return;
+      }
+      snackbarCallback();
       return;
     }
     this.setState({

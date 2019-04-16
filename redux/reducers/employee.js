@@ -18,6 +18,10 @@ export default (state = intialState, { type, payload }) => {
         ...state,
         email: payload
       };
+    case facceRecog.EMPLOYEE_PROFILE:
+      return {
+        profile: { ...state, ...payload }
+      };
     default:
       return state;
   }

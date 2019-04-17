@@ -21,52 +21,17 @@ class LoginForm extends Component {
     this.setState({ email: value });
   };
   onSubmit = async () => {
-    this.setState({
-      error: false
-    });
-    const { navigate, setEmail, snackbarCallback, setLoader } = this.props;
-    const { email } = this.state;
-    const validEmail = validateEmail(email);
-    if (validEmail) {
-      const params = {
-        email
-      };
-      setLoader();
-      const res = await emailCheck(params);
-      setLoader();
-      if (res.status === 200) {
-        await setEmail(email);
-        navigate("Camera");
-        return;
-      }
-      snackbarCallback();
-      return;
-    }
-    this.setState({
-      error: true
-    });
+    this.props.navigate("Camera");
   };
   render() {
     const { error } = this.state;
     return (
       <View>
-        <TextInput
-          style={error ? styles.errorInput : styles.input}
-          autoCapitalize="none"
-          onChangeText={text => this.onChange(text)}
-          autoCorrect={false}
-          onEndEditing={() => this.setState({ error: false })}
-          ref={input => (this.emailInput = input)}
-          keyboardType="email-address"
-          returnKeyType="next"
-          placeholder="Email"
-          placeholderTextColor="rgba(225,225,225,0.7)"
-        />
         <TouchableOpacity
           style={styles.buttonContainer}
           onPress={() => this.onSubmit()}
         >
-          <Text style={styles.buttonText}>SUBMIT</Text>
+          <Text style={styles.buttonText}>Punch-in</Text>
         </TouchableOpacity>
       </View>
     );

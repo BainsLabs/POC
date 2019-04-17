@@ -67,6 +67,9 @@ class CameraComponent extends Component {
       };
 
       const response = await faceMatch(params);
+      this.setState({
+        loader: false
+      });
       if (response.status === 200) {
         navigate("Profile", {
           email
@@ -95,58 +98,37 @@ class CameraComponent extends Component {
     } else {
       return (
         <View style={{ flex: 1 }}>
-          {Platform.Version > 26 ? (
-            <Camera
-              style={{ flex: 1 }}
-              type={"front"}
-              ref={ref => {
-                this.camera = ref;
-              }}
-              onFacesDetected={
-                this.props.navigation.state.routeName === "Camera"
-                  ? this.handleFacesDetected
-                  : null
-              }
-              faceDetectorSettings={{
-                mode: FaceDetector.Constants.Mode.fast,
-                detectLandmarks: FaceDetector.Constants.Mode.none,
-                runClassifications: FaceDetector.Constants.Mode.none
+          <Camera
+            style={{ flex: 1 }}
+            type={"front"}
+            ref={ref => {
+              this.camera = ref;
+            }}
+          >
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: "transparent",
+                flexDirection: "row"
               }}
             >
-              <Spinner
-                visible={this.state.loader}
-                textContent={"Loading..."}
-                textStyle={styles.spinnerTextStyle}
-              />
-            </Camera>
-          ) : (
-            <Camera
-              style={{ flex: 1 }}
-              type={"front"}
-              ref={ref => {
-                this.camera = ref;
-              }}
-            >
-              <View
+              <TouchableOpacity
+                onPress={() => this.setFace()}
                 style={{
                   flex: 1,
-                  backgroundColor: "transparent",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-start"
+                  justifyContent: "flex-end",
+                  alignItems: "center"
                 }}
               >
-                <TouchableOpacity onPress={() => this.setFace()}>
-                  <Icon raised name="camera" type="font-awesome" color="#000" />
-                </TouchableOpacity>
-              </View>
-              <Spinner
-                visible={this.state.loader}
-                textContent={"Loading..."}
-                textStyle={styles.spinnerTextStyle}
-              />
-            </Camera>
-          )}
+                <Icon raised name="camera" type="font-awesome" color="#000" />
+              </TouchableOpacity>
+            </View>
+            <Spinner
+              visible={this.state.loader}
+              textContent={"Loading..."}
+              textStyle={styles.spinnerTextStyle}
+            />
+          </Camera>
         </View>
       );
     }

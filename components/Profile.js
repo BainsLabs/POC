@@ -15,16 +15,20 @@ import { ScreenOrientation } from "expo";
 import _ from "lodash";
 class ProfileView extends ResponsiveComponent {
   static navigationOptions = {
-    title: "Profile"
+    title: "Profile",
+    headerLeft: null
   };
   async componentDidMount() {
+    setTimeout(() => {
+      this.props.navigation.navigate("Home");
+    }, 10000);
     ScreenOrientation.allowAsync(
       ScreenOrientation.Orientation.ALL_BUT_UPSIDE_DOWN
     );
     loc(this);
     const { navigation } = this.props;
     const params = {
-      email: navigation.getParam("email") || "akshay1@gmail.com"
+      email: navigation.getParam("email")
     };
   }
   componentWillUnmount() {
@@ -72,6 +76,8 @@ class ProfileView extends ResponsiveComponent {
         style: {
           container: {
             flex: 1,
+            width: wp("50%"),
+            height: hp("100%"),
             flexDirection: "row"
           },
           header: {
@@ -79,6 +85,8 @@ class ProfileView extends ResponsiveComponent {
             width: wp(50)
           },
           headerContent: {
+            flex: 1,
+            width: wp(50),
             padding: 30,
             alignItems: "center"
           },
@@ -86,8 +94,8 @@ class ProfileView extends ResponsiveComponent {
             color: "#000"
           },
           avatar: {
-            width: wp(20),
-            height: hp(50),
+            width: wp(30),
+            height: hp(40),
             borderRadius: wp(100) / 2,
             borderWidth: 4,
             borderColor: "white",

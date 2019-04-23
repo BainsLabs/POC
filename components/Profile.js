@@ -36,8 +36,8 @@ class ProfileView extends ResponsiveComponent {
   }
   render() {
     const { styles } = this;
-    const { profile, profile_user } = this.props;
-    console.log(profile, "profile");
+    const { profile, profile_user, state } = this.props;
+    console.log(state, "profile");
     const image_url =
       profile_user.image_url ||
       "https://bootdey.com/img/Content/avatar/avatar1.png";

@@ -23,7 +23,8 @@ class CameraComponent extends Component {
   state = {
     hasCameraPermission: null,
     faceDetected: false,
-    loader: false
+    loader: false,
+    is_mounted: false
   };
 
   async componentWillMount() {
@@ -32,64 +33,79 @@ class CameraComponent extends Component {
     );
   }
   async componentDidMount() {
+    this.setState({
+      is_mounted: true
+    });
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({ hasCameraPermission: status === "granted" });
   }
+  componentWillUnmount() {
+    this.setState({
+      is_mounted: false
+    });
+  }
   setFace = () => {
-    this.setState(
-      {
-        faceDetected: true
-      },
-      () => this.onFacesDetected()
-    );
+    if (this.state.is_mounted) {
+      this.setState(
+        {
+          faceDetected: true
+        },
+        () => this.onFacesDetected()
+      );
+    }
   };
   onFacesDetected = async () => {
-    const {
-      faceMatch,
-      navigation: { navigate },
-      email
-    } = this.props;
-    if (this.camera) {
-      if (!this.state.faceDetected) {
-        return;
-      }
-      let photo = await this.camera.takePictureAsync({
-        base64: true,
-        skipProcessing: false
-      });
-      this.setState({
-        faceDetected: false,
-        loader: true
-      });
-      const params = {
-        img_base: photo.base64,
+    if (this.state.is_mounted) {
+      const {
+        faceMatch,
+        navigation: { navigate },
         email
-      };
-
-      const response = await faceMatch(params);
-      this.setState({
-        loader: false
-      });
-      if (response.status === 200) {
-        navigate("Profile", {
-          email
+      } = this.props;
+      if (this.camera) {
+        if (!this.state.faceDetected) {
+          return;
+        }
+        let photo = await this.camera.takePictureAsync({
+          base64: true,
+          skipProcessing: false
         });
-        return;
+        this.setState({
+          faceDetected: false,
+          loader: true
+        });
+        const params = {
+          img_base: photo.base64,
+          email,
+          punch_type: this.props.navigation.getParam("punch_type"),
+          note: this.props.navigation.getParam("note")
+        };
+
+        const response = await faceMatch(params);
+        this.setState({
+          loader: false
+        });
+        if (response.status === 200) {
+          navigate("Profile", {
+            email
+          });
+          return;
+        }
       }
+      navigate("Home", {
+        showSnackbar: true,
+        message: "Face didnt Match"
+      });
     }
-    navigate("Home", {
-      showSnackbar: true,
-      message: "Face didnt Match"
-    });
   };
 
   handleFacesDetected = ({ faces }) => {
-    if (faces.length > 0) {
-      this.setState({ faceDetected: true }, () => this.onFacesDetected());
+    if (this.state.is_mounted) {
+      if (faces.length > 0) {
+        this.setState({ faceDetected: true }, () => this.onFacesDetected());
+      }
     }
   };
   render() {
-    console.log(Platform.Version, "Version-check");
     const { hasCameraPermission, loader } = this.state;
     if (hasCameraPermission === null) {
       return <View />;

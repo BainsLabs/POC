@@ -10,7 +10,6 @@ class Login extends Component {
     title: "BainsLabs"
   };
   state = {
-    fontLoaded: false,
     snackbarShow: false,
     loader: false
   };
@@ -18,9 +17,6 @@ class Login extends Component {
     ScreenOrientation.allowAsync(
       ScreenOrientation.Orientation.ALL_BUT_UPSIDE_DOWN
     );
-    this.setState({
-      fontLoaded: true
-    });
   }
   showSnackbar = () => {
     this.setState({
@@ -33,7 +29,7 @@ class Login extends Component {
     });
   };
   render() {
-    const { fontLoaded, snackbarShow, loader } = this.state;
+    const { snackbarShow, loader } = this.state;
     const { navigation } = this.props;
     const showSnackbar = snackbarShow || navigation.getParam("showSnackbar");
     const snackbarMessage = navigation.getParam("showSnackbar")
@@ -42,7 +38,7 @@ class Login extends Component {
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
         <View style={styles.loginContainer}>
-          {fontLoaded ? <Text style={styles.logo}>BainsLabs</Text> : null}
+          <Text style={styles.logo}>BainsLabs</Text>
         </View>
 
         <View style={styles.formContainer}>

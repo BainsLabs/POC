@@ -36,7 +36,14 @@ class ProfileView extends ResponsiveComponent {
   }
   render() {
     const { styles } = this;
-    const { profile, profile_user, state } = this.props;
+    const {
+      profile,
+      profile_user,
+      state,
+      login_time,
+      break_out_time,
+      break_in_time
+    } = this.props;
     console.log(state, "profile");
     const image_url =
       profile_user.image_url ||
@@ -59,11 +66,26 @@ class ProfileView extends ResponsiveComponent {
         <View style={styles.body}>
           <View style={styles.bodyContent}>
             <Text style={styles.textInfo}>
-              Email:&nbsp;{profile.official_email || ""}
+              Email:&nbsp;{profile.official_email || null}
             </Text>
             <Text style={styles.textInfo}>
-              Employee-ID:&nbsp;{profile.employee_id || ""}
+              Employee-ID:&nbsp;{profile.employee_id || null}
             </Text>
+            {login_time ? (
+              <Text style={styles.textInfo}>
+                login-Time:&nbsp;{login_time || null}
+              </Text>
+            ) : null}
+            {break_in_time ? (
+              <Text style={styles.textInfo}>
+                PunchIn-Time:&nbsp;{break_in_time || null}
+              </Text>
+            ) : null}
+            {break_out_time ? (
+              <Text style={styles.textInfo}>
+                PunchOut-Time:&nbsp;{break_out_time || null}
+              </Text>
+            ) : null}
           </View>
         </View>
       </View>
@@ -166,6 +188,9 @@ class ProfileView extends ResponsiveComponent {
 const mapStateToProps = state => ({
   profile: _.get(state, "employee.employee.employee_profile") || {},
   profile_user: _.get(state, "employee.employee.user") || {},
+  login_time: _.get(state, "employee.employee.login_time") || null,
+  break_out_time: _.get(state, "employee.employee.break_out_time") || null,
+  break_in_time: _.get(state, "employee.employee.break_in_time") || null,
   state
 });
 export default connect(mapStateToProps)(ProfileView);

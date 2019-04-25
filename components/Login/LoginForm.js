@@ -1,16 +1,9 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  View,
-  TextInput,
-  Text,
-  TouchableOpacity
-} from "react-native";
-import OverlayComponent from "../common/Overlay";
+import { View } from "react-native";
+import { styles } from "./styles";
+import Button from "../common/Button";
+import OverlayComponent from "../common/Modal/Overlay";
 import { Overlay } from "react-native-elements";
-import { emailCheck } from "../../redux/actions/faceRecognition";
-import { connect } from "react-redux";
-import { setEmail } from "../../redux/actions/faceRecognition";
 
 class LoginForm extends Component {
   state = {
@@ -30,7 +23,6 @@ class LoginForm extends Component {
   };
   punchOut = (punchType, push) => {
     if (push) {
-      console.log(this.state.reason, "reason");
       this.props.navigate("Camera", {
         note: this.state.reason,
         punch_type: punchType
@@ -42,14 +34,18 @@ class LoginForm extends Component {
   };
   render() {
     const { reason } = this.state;
+    const {
+      buttonContainer,
+      buttonContainerRed,
+      buttonText,
+      overlayStyle
+    } = styles;
     return (
       <View>
         <Overlay
           isVisible={this.state.showNoteFiled}
           onBackdropPress={() => this.setState({ showNoteFiled: false })}
-          overlayStyle={{
-            height: 150
-          }}
+          overlayStyle={overlayStyle}
         >
           <OverlayComponent
             onChange={this.onChange}
@@ -57,65 +53,21 @@ class LoginForm extends Component {
             closeOverlay={this.punchOut}
           />
         </Overlay>
-        <TouchableOpacity
-          style={styles.buttonContainer}
+        <Button
+          style={buttonContainer}
           onPress={() => this.onSubmit()}
-        >
-          <Text style={styles.buttonText}>Punch-in</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.buttonContainerRed}
+          btnText="Punch-in"
+          btnTextStyle={buttonText}
+        />
+        <Button
+          style={buttonContainerRed}
           onPress={() => this.punchOut("punch-out")}
-        >
-          <Text style={styles.buttonText}>Punch-out</Text>
-        </TouchableOpacity>
+          btnText="Punch-out"
+          btnTextStyle={buttonText}
+        />
       </View>
     );
   }
 }
-const styles = StyleSheet.create({
-  container: {
-    padding: 20
-  },
-  input: {
-    height: 40,
-    backgroundColor: "rgba(225,225,225,0.2)",
-    marginBottom: 10,
-    padding: 10,
-    color: "#fff"
-  },
-  errorInput: {
-    height: 40,
-    backgroundColor: "rgba(225,225,225,0.2)",
-    borderColor: "red",
-    borderWidth: 1,
-    marginBottom: 10,
-    padding: 10,
-    color: "#fff"
-  },
-  buttonContainer: {
-    backgroundColor: "#2980b6",
-    paddingVertical: 15
-  },
-  buttonContainerRed: {
-    backgroundColor: "#2980b6",
-    paddingVertical: 15,
-    backgroundColor: "red",
-    marginTop: 10
-  },
-  buttonText: {
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "700"
-  },
-  buttonTextRed: {
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "700"
-  }
-});
 
-export default connect(
-  null,
-  { setEmail }
-)(LoginForm);
+export default LoginForm;

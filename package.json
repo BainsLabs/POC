@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0",
+    "remote-redux-devtools": "^0.5.16",
     "schedule": "^0.4.0"
   },
   "private": true

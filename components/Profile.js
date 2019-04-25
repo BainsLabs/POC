@@ -44,7 +44,6 @@ class ProfileView extends ResponsiveComponent {
       break_out_time,
       break_in_time
     } = this.props;
-    console.log(state, "profile");
     const image_url =
       profile_user.image_url ||
       "https://bootdey.com/img/Content/avatar/avatar1.png";

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { StyleSheet, View, Text, KeyboardAvoidingView } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import LoginForm from "./LoginForm";
-import Snackbar from "../common/Snackbar";
+import Snackbar from "../common/Snackbar/Snackbar";
 import { ScreenOrientation } from "expo";
 import Spinner from "react-native-loading-spinner-overlay";
 class Login extends Component {

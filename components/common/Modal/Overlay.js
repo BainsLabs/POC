@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { View, TextInput, Text, TouchableOpacity } from "react-native";
 import { Icon } from "react-native-elements";
+import Button from "../Button";
 
 class Overlay extends Component {
   render() {
@@ -32,9 +33,23 @@ class Overlay extends Component {
           placeholder="Reason"
           onChangeText={text => onChange(text)}
         />
-        <TouchableOpacity onPress={() => closeOverlay("punch-out", true)}>
-          <Icon name="check" type="feather" color="#000" />
-        </TouchableOpacity>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginHorizontal: 20
+          }}
+        >
+          <Button
+            onPress={() => closeOverlay("punch-out", false, true)}
+            btnText="Skip"
+          />
+          <Button
+            onPress={() => closeOverlay("punch-out", true, false)}
+            btnText="Submit"
+          />
+        </View>
       </View>
     );
   }

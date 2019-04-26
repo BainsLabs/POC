@@ -21,12 +21,16 @@ class LoginForm extends Component {
       punch_type: "punch-in"
     });
   };
-  punchOut = (punchType, push) => {
+  punchOut = (punchType, push, skip = false) => {
+    console.log(skip);
     if (push) {
       this.props.navigate("Camera", {
         note: this.state.reason,
         punch_type: punchType
       });
+    }
+    if (skip) {
+      this.props.navigate("Camera");
     }
     this.setState({
       showNoteFiled: !this.state.showNoteFiled

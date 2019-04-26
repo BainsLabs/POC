@@ -1,5 +1,5 @@
 const api = async (url, params, method = "GET") => {
-  const api = await fetch(`http://1ca26f00.ngrok.io${url}`, {
+  const api = await fetch(`http://4254c7a6.ngrok.io${url}`, {
     method,
     body: JSON.stringify(params),
     headers: {

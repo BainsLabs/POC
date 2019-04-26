@@ -19,11 +19,12 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "android": {
+      "package": "com.bainslabs.bainsLabsAPP"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bainslabs.bainsLabsAPP"
     }
   }
 }
